@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+{% load custom_filters %}
+
+{% block title %}Templates | Api for LLM{% endblock %}
+
+{% block content %}
+<p><b>Templates</b></p>
+
+{% for template in templates %}
+    <div class="template">
+        <p><strong>Name:</strong> {{ template.name }}</p>
+        <p><strong>Model:</strong> {{ template.model }}</p>
+        <p><strong>Temperature:</strong> {{ template.temperature }}</p>
+        <p><strong>System prompt:</strong> {{ template.system_prompt|linebreaks }}</p>
+        <p><strong>Functions:</strong></p>
+        <ul>
+        {% for function in template.functions.all %}
+            <li>
+                <strong>Name:</strong> {{ function.name }}
+                <pre><strong>Schema:</strong> {{ function.schema|pretty_json }}</pre>
+            </li>
+        {% empty %}
+            <li>No functions associated.</li>
+        {% endfor %}
+        </ul>
+        <p>
+            <strong>Created at:</strong> {{ template.created_at }} |
+            <strong>Updated at:</strong> {{ template.updated_at }}
+        </p>
+        <hr>
+    </div>
+{% empty %}
+    <p>You have not created any templates yet.</p>
+{% endfor %}
+
+{% if templates %}
+<div style="text-align: center;">
+    {% if templates.has_previous %}
+        <a href="?page={{ templates.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    Page {{ templates.number }} of {{ templates.paginator.num_pages }}
+
+    {% if templates.has_next %}
+        <a href="?page={{ templates.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

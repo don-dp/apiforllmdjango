@@ -1,0 +1,37 @@
+{% extends "base/base.html" %}
+{% load custom_filters %}
+
+{% block title %}Functions | Api for LLM{% endblock %}
+
+{% block content %}
+<p><b>Functions</b></p>
+
+{% for function in functions %}
+    <div class="function">
+        <p><strong>Name:</strong> {{ function.name }}</p>
+        <pre><strong>Schema:</strong> {{ function.schema|pretty_json }}</pre>
+        <p>
+            <strong>Created at:</strong> {{ function.created_at }} |
+            <strong>Updated at:</strong> {{ function.updated_at }}
+        </p>
+        <hr>
+    </div>
+{% empty %}
+    <p>You have not created any functions yet.</p>
+{% endfor %}
+
+{% if functions %}
+<div style="text-align: center;">
+    {% if functions.has_previous %}
+        <a href="?page={{ functions.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    Page {{ functions.number }} of {{ functions.paginator.num_pages }}
+
+    {% if functions.has_next %}
+        <a href="?page={{ functions.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

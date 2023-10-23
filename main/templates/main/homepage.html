@@ -1,0 +1,22 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+    <b>API for LLM: Streamlining Access to Large Language Models</b>
+    <br>
+    <p>The best way to understand the site is through an example. Let's say you want to build an AI travel planner:</p>
+    <ul>
+        <li>Setting up: Begin by hosting various functions; one could compute optimal flight options, another might recommend hotel accommodations. After creating these functions, proceed to establish a chat template. This template will define system prompts to inquire about user travel preferences and dates, and link to the functions you've just created for flight and hotel suggestions.</li>
+        <li>API Key Storage: Importantly, API for LLM provides secure storage for API keys, which can be passed to your functions. This enables your travel planner to integrate with multiple travel service APIs like Kayak for flights, Booking.com for hotels and Uber for local transport options.</li>
+        <li>Launching the template on your website: After linking these functions to your chat template and selecting a large language model with an appropriate response temperature, you're ready to go. Each time a user starts a chat, an instance of the template is started. Users can then interact seamlessly with the AI, which internally leverages the defined functions to provide a comprehensive, tailored travel plan.</li>
+    </ul>
+
+    <br>
+    <b>Additional info</b>
+    <ul>
+        <li>gpt-3.5 with 16k tokens context is being used. gpt-4 access is available for paying users.</li>
+        <li>Functions run in Docker containers with gVisor for sandboxing currently, with potential plans for Firecracker in the future.</li>
+        <li>There is no API yet; the chats are run on this website for testing.</li>
+        <li>The site is under active development, numerous missing features are currently being worked on.</li>
+    </ul>
+    
+{% endblock %}

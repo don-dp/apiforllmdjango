@@ -1,0 +1,32 @@
+#cloud-config
+users:
+  - name: sammy
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh-authorized-keys:
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC0KjZX1MTXRXMwD9vRRkQvdlbM8sY76xjBvwO5o5KwUuuYsK8RkWlc1uzb1X2kzISiECM37Lz2N8BEJlKMO1/YBChPH9MO2v0Pu7Td8ntFgjCxwmuHAamwqb/PcNWWIR00rrMpZR6ntqpTw+Uc+3PsMwnVFH7s0bKwW47YO82vtd306JMp10JFqbb82JVVlrmI6npC4HoLDmISbQOBymy7M1G+wLbIQL2UIWSJUJdOE6k6HrJsrevjsS4QeRFrN5k5ZYyI3aLlXKqcUaSsi54jo09lU5szl5SAbuWsaEFgdRJPZIIFQpHOXauPTvdAVdBDHlTyME0dhweRAIUENZqpig+I9cx8sAZ2A/cA+KldeAAeSYHQ/MX8gxjL/q1Av2bnUM4e8F+hJCvQSEgZlklXOIfxR7Qg4gOfIsVMFAc/rX+sGwjqQSglk8LpRdM20swvrucusIP2qZaSSAUxJf6RAnUwAyCwMDH0B31Tx0K+9oq2WffANpdiS2dUVNBGVdc= dp@dp"
+
+package_update: true
+package_upgrade: true
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - software-properties-common
+  - ufw
+
+runcmd:
+  - |
+    while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+      echo "Waiting for other software managers to finish..."
+      sleep 2
+    done
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    apt-get update
+    apt-get install -y docker-ce
+    apt-get install docker-compose-plugin
+    systemctl restart docker
+    usermod -aG docker sammy
+    ufw allow OpenSSH
+    ufw --force enable

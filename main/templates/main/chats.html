@@ -1,0 +1,51 @@
+{% extends "base/base.html" %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+<div class="row" style="height: 80vh;">
+  <div class="col-4 col-md-3 overflow-y-scroll h-100">
+    <p class="text-center"><a href="{% url 'create_chat' %}">Create new chat</a></p>
+    <ul class="list-group" id="chat_sessions_container">
+      {% for chat in chat_sessions %}
+        {% if forloop.first %}
+        <li class="list-group-item active" aria-current="true" onclick="fetchChatMessages({{ chat.id }})" id="session-{{ chat.id }}">{{ chat.title|truncate_chars:70 }}</li>
+        {% else %}
+        <li class="list-group-item" onclick="fetchChatMessages({{ chat.id }})" id="session-{{ chat.id }}">{{ chat.title|truncate_chars:70 }}</li>
+        {% endif %}
+      {% endfor %}
+      </ul>
+  </div>
+
+  <div class="col-8 col-md-9 d-flex flex-column justify-content-end h-100">
+    <ul class="list-group" id="chat_messages_container" style="flex-grow: 1; overflow-y: auto;">
+      {% for message in chat_messages %}
+        <li class="list-group-item" style="white-space: pre-line;"><b>{{ message.role }}</b> : <span>{{ message.content }}</span></li>
+      {% endfor %}
+    </ul>
+    
+    <div class="d-flex align-items-center">
+      <div class="btn-group dropup">
+        <button type="button" class="btn btn-secondary" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 0.25rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-up"
+            viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+              d="M7.646 2.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 3.707 2.354 9.354a.5.5 0 1 1-.708-.708l6-6z" />
+            <path fill-rule="evenodd"
+              d="M7.646 6.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 7.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z" />
+          </svg>
+        </button>
+        <ul class="dropdown-menu" style="background-color: #f0eeee;">
+          <li><button class="dropdown-item" id="invoke_ai"><b>Invoke AI</b></button></li>
+          <li><button class="dropdown-item" id="invoke_function"><b>Invoke function</b></button></li>
+        </ul>
+      </div>
+      <textarea class="form-control form-control-lg mb-2" rows="1" style="max-height: 200px; height: 24px; margin-left: 8px;"
+        placeholder="Enter chat message" aria-label="Enter chat message" autofocus id="chat_input_box"></textarea>
+      <button type="button" class="btn btn-primary btn-lg mb-2" style="margin-left: 8px;" id="chat_message_submit">></button>
+    </div>
+
+  </div>
+</div>
+<script src="{% static 'main/chat.js' %}"></script>
+{% endblock %}
