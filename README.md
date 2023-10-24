@@ -16,13 +16,51 @@
 
 *Everything above can be skipped using the cloud init script*
 
-[Create a deploy key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys) if required.
+To check the cloud-init logs:
+
+`sudo cat /var/log/cloud-init-output.log`
+
+`sudo cat /var/log/cloud-init.log`
 
 ## Setup project
 
-`git clone git@github.com:don-dp/apiforllmdjango.git`
+`git clone https://github.com/don-dp/apiforllmdjango.git`
 
 Set environment variables in `~/.bashrc`
+
+`APIFORLLMDJANGO_SECRET_KEY`: The secret key for your Django application.
+
+`APIFORLLMDJANGO_DEBUG`: Set this to True for debugging. Use False in production.
+
+`APIFORLLMDJANGO_ALLOWED_HOSTS`: A comma-separated list of hosts/domains your app can serve.
+
+`APIFORLLMDJANGO_DEFAULT_FROM_EMAIL`: Default 'from' email address for sending mails.
+
+`APIFORLLMDJANGO_EMAIL_BACKEND`: Backend to use for sending emails.
+
+`APIFORLLMDJANGO_EMAIL_HOST`: SMTP service host.
+
+`APIFORLLMDJANGO_EMAIL_PORT`: Port number for the email service.
+
+`APIFORLLMDJANGO_EMAIL_USE_TLS`: Use TLS for email, typically True or False.
+
+`APIFORLLMDJANGO_EMAIL_HOST_USER`: Username for the email service.
+
+`APIFORLLMDJANGO_EMAIL_HOST_PASSWORD`: Password for the email service.
+
+`APIFORLLMDJANGO_TURNSTILE_SECRET_KEY`: Secret key for Turnstile.
+
+`APIFORLLMDJANGO_POSTGRES_USER`: PostgreSQL database user.
+
+`APIFORLLMDJANGO_POSTGRES_PASSWORD`: PostgreSQL database password.
+
+`APIFORLLMDJANGO_POSTGRES_DB`: Name of the PostgreSQL database.
+
+`APIFORLLMDJANGO_NGINX_CONFIG`: nginx.prod.conf or nginx.dev.conf
+
+`APIFORLLMDJANGO_ENV`: Sets the environment. Could be local or prod.
+
+`APIFORLLMDJANGO_OPENAI_KEY`: API key for OpenAI.
 
 `source ~/.bashrc`
 
@@ -42,7 +80,14 @@ Enable full strict ssl and authenticated pulls
 
 `sudo ufw allow 443`
 
-## Export database
+## Backup and restore database
 
-`docker exec -t <container_id> pg_dump -U $APIFORLLMDJANGO_POSTGRES_USER -d $APIFORLLMDJANGO_POSTGRES_DB > backup.sql
-`
+`docker exec -t <container_id> pg_dump -U $APIFORLLMDJANGO_POSTGRES_USER -d $APIFORLLMDJANGO_POSTGRES_DB > backup.sql`
+
+`docker exec -it <container_id> psql -U <username> -d postgres -c "drop database <db_name>;"`
+
+`docker exec -it <container_id> psql -U $APIFORLLMDJANGO_POSTGRES_USER -l`
+
+`docker exec -it <container_id> psql -U $APIFORLLMDJANGO_POSTGRES_USER -d postgres -c "create database $APIFORLLMDJANGO_POSTGRES_DB;"`
+
+`docker exec -i <container_id> psql -U $APIFORLLMDJANGO_POSTGRES_USER -d $APIFORLLMDJANGO_POSTGRES_DB < backup.sql`
