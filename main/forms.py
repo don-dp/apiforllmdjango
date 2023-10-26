@@ -55,6 +55,7 @@ class ChatSessionCreateForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super(ChatSessionCreateForm, self).save(commit=False)
+        instance.user = self.user
         if instance.template.is_public or instance.template.user == self.user:
             if commit:
                 instance.save()
